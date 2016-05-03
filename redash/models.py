@@ -811,7 +811,6 @@ class Dashboard(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
     user_email = peewee.CharField(max_length=360, null=True)
     user = peewee.ForeignKeyField(User)
     layout = peewee.TextField()
-    groups = ArrayField(peewee.IntegerField, null=True)
     dashboard_filters_enabled = peewee.BooleanField(default=False)
     is_archived = peewee.BooleanField(default=False, index=True)
 
