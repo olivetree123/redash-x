@@ -1,0 +1,24 @@
+.coveralls.yml
+.idea
+*.pyc
+.coverage
+rd_ui/dist
+.DS_Store
+celerybeat-schedule*
+.#*
+\#*#
+*~
+_build
+
+# Vagrant related
+.vagrant
+Berksfile.lock
+redash/dump.rdb
+.env
+.ruby-version
+venv
+
+dump.rdb
+
+# Docker related
+docker-compose.yml
