@@ -30,7 +30,6 @@ class QuerySearchAPI(BaseResource):
 
         return [q.to_dict() for q in models.Query.search(term, self.current_user.groups)]
 
-
 class QueryRecentAPI(BaseResource):
     @require_permission('view_query')
     def get(self):
@@ -67,10 +66,9 @@ class QueryListAPI(BaseResource):
 
 
 class QueryAPI(BaseResource):
-    @require_permission('edit_query')
     def post(self, query_id):
         query = get_object_or_404(models.Query.get_by_id_and_org, query_id, self.current_org)
-        require_admin_or_owner(query.user_id)
+        #require_admin_or_owner(query.user_id)
 
         query_def = request.get_json(force=True)
         for field in ['id', 'created_at', 'api_key', 'visualizations', 'latest_query_data', 'user', 'last_modified_by', 'org']:
@@ -90,10 +88,11 @@ class QueryAPI(BaseResource):
 
         return query.to_dict(with_visualizations=True)
 
-    @require_permission('view_query')
+    #@require_permission('view_query')
     def get(self, query_id):
-        q = get_object_or_404(models.Query.get_by_id_and_org, query_id, self.current_org)
-        require_access(q.groups, self.current_user, view_only)
+        query_hash = query_id
+        q = get_object_or_404(models.Query.get_by_hash, query_hash)
+        #require_access(q.groups, self.current_user, view_only)
 
         if q:
             return q.to_dict(with_visualizations=True)

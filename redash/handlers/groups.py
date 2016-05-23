@@ -1,4 +1,5 @@
 import time
+import json
 from flask import request
 from flask_restful import abort
 from redash import models
@@ -52,12 +53,19 @@ class GroupResource(BaseResource):
         return group.to_dict()
 
     def get(self, group_id):
-        if not (self.current_user.has_permission('admin') or int(group_id) in self.current_user.groups):
-            abort(403)
+        print 'group_id : ',group_id
+        if group_id.isdigit():
+            if not (self.current_user.has_permission('admin') or int(group_id) in self.current_user.groups):
+                abort(403)
 
-        group = models.Group.get_by_id_and_org(group_id, self.current_org)
+            group = models.Group.get_by_id_and_org(group_id, self.current_org)
 
-        return group.to_dict()
+            return group.to_dict()
+        elif group_id and group_id != 'undefined':
+            group_id_list = json.loads(group_id)
+            groups = models.Group.select().where(models.Group.id << group_id_list)
+            return [g.to_dict() for g in groups]
+        return ''
 
     @require_admin
     def delete(self, group_id):

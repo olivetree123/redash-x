@@ -55,10 +55,81 @@
                   var el = gsItemTemplate.replace('{id}', item.id).replace('{name}', item.name);
                   gridster.add_widget(el, item.xSize, item.ySize, item.col, item.row);
                 });
-              }
+              };
+              $scope.getGroups();
             });
           }, true);
-
+          
+          $scope.getAllGroups = function () {
+            $http.get('api/groups', {
+            }).success(function(data,status,headers,config) {
+                $scope.all_groups = new Array();
+                for(var i=0 ;i<data.length;i++){
+                  var d = {'id':data[i]["id"],'name':data[i]["name"]};
+                  $scope.all_groups[i] = d;
+                }
+                console.log($scope.dashboard.groups)
+          })};
+          $scope.getAllGroups();
+          $scope.getGroups = function () {
+            console.log('dashboard groups : ',$scope.dashboard.groups);
+            $scope.groups = new Array();
+            $scope.default_group = 0;
+            if($scope.dashboard.groups == null) {
+              return;
+            }
+            $http.get('api/groups/' + JSON.stringify($scope.dashboard.groups)).success(function(data,status,headers,config){
+              
+              console.log('data : ',data)
+              for(var i=0 ;i<data.length;i++){
+                var d = {'id':data[i]["id"],'name':data[i]["name"]};
+                $scope.groups[i] = d;
+              };
+              if($scope.groups.length > 0){
+                $scope.default_group = $scope.groups[0]['id'];
+              }
+              else{
+                $scope.default_group = 0;
+              }
+              console.log('default group : ',$scope.default_group)
+              console.log('groups length : ',$scope.groups.length);
+          })};
+          
+          
+          $scope.deleteGroup = function (group_id) {
+            $http.post('/api/dashboards/delgroup',{"dashboard_id":$scope.dashboard.id,"group_id":group_id})
+            .success(function(data,status,headers,config){
+              console.log('del data : ',data['group_id']);
+              for(var i=0;i<$scope.groups.length;i++){
+                console.log('group id',$scope.groups[i]['id'])
+                if($scope.groups[i]['id'] == data['group_id']){
+                  $scope.groups.splice(i,1);
+                  break;
+                }
+              }
+            })
+          };
+          
+          $scope.addGroup = function (group_id) {
+            console.log(group_id);
+            $http.post('/api/dashboards/group',{'dashboard_id':$scope.dashboard.id,'group_id':group_id})
+            .success(function(data,status,headers,config){
+              var len = $scope.groups.length;
+              var flag = 0;
+              for(var i=0;i<len;i++){
+                if($scope.groups[i]['id'] == data['id']){
+                  flag = 1;
+                  break;
+                }
+              }
+              if(flag == 0){
+                $scope.groups[len] = {'id':data['id'],'name':data['name']}
+                console.log('groups xxxx : ',$scope.groups);  
+              }
+              
+            })
+          };
+          
           $scope.saveDashboard = function() {
             $scope.saveInProgress = true;
             // TODO: we should use the dashboard service here.
@@ -162,7 +233,7 @@
               return;
             }
 
-            Query.get({ id: $scope.query.selected.id }, function(query) {
+            Query.get({ id: $scope.query.selected.query_hash }, function(query) {
               if (query) {
                 $scope.selected_query = query;
                 if (query.visualizations.length) {
@@ -187,6 +258,8 @@
           }, true);
 
           $scope.saveWidget = function() {
+            console.log('hahahahahahhahah');
+            console.log('scope dashboard : ',$scope.dashboard);
             $scope.saveInProgress = true;
             var widget = new Widget({
               'visualization_id': $scope.selectedVis && $scope.selectedVis.id,
@@ -195,6 +268,7 @@
               'width': $scope.widgetSize,
               'text': $scope.text
             });
+            console.log('widget : ',widget)
 
             widget.$save().then(function(response) {
               // update dashboard layout

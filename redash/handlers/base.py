@@ -15,7 +15,6 @@ class BaseResource(Resource):
 
     def dispatch_request(self, *args, **kwargs):
         kwargs.pop('org_slug', None)
-
         return super(BaseResource, self).dispatch_request(*args, **kwargs)
 
     @property
