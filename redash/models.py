@@ -703,6 +703,10 @@ class Query(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
     def __unicode__(self):
         return unicode(self.id)
 
+    @classmethod
+    def get_by_hash(cls,query_hash):
+        return cls.get(cls.query_hash == query_hash)
+
 
 class Alert(ModelTimestampsMixin, BaseModel):
     UNKNOWN_STATE = 'unknown'
@@ -811,6 +815,7 @@ class Dashboard(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
     user_email = peewee.CharField(max_length=360, null=True)
     user = peewee.ForeignKeyField(User)
     layout = peewee.TextField()
+    groups = ArrayField(peewee.IntegerField, null=True)
     dashboard_filters_enabled = peewee.BooleanField(default=False)
     is_archived = peewee.BooleanField(default=False, index=True)
 
@@ -864,6 +869,7 @@ class Dashboard(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
             'name': self.name,
             'user_id': self.user_id,
             'layout': layout,
+            'groups': self.groups,
             'dashboard_filters_enabled': self.dashboard_filters_enabled,
             'widgets': widgets_layout,
             'is_archived': self.is_archived,
@@ -872,8 +878,11 @@ class Dashboard(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
         }
 
     @classmethod
-    def all(cls, org):
-        return cls.select().where(cls.org==org, cls.is_archived==False)
+    def all(cls, org=None):
+        if org:
+            return cls.select().where(cls.org==org, cls.is_archived==False)
+        else:
+            return cls.select().where(cls.is_archived==False)
 
     @classmethod
     def get_by_slug_and_org(cls, slug, org):
@@ -911,7 +920,25 @@ class Dashboard(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
 
     def __unicode__(self):
         return u"%s=%s" % (self.id, self.name)
+    
+    @classmethod
+    def get_by_id(cls,id):
+        return cls.get(cls.id==id, cls.is_archived==False)
 
+    @classmethod
+    def get_by_groups(cls,groups):
+        res = cls.select().where(cls.groups.contains_any(groups))
+        print 'res : ',[r.__dict__['_data'] for r in res]
+        return res
+
+    @classmethod
+    def get_by_slug(cls,slug):
+        return cls.get(cls.slug == slug)
+
+    @classmethod
+    def get_by_slug_group(cls,slug,groups):
+        return cls.select().where(cls.slug == slug,cls.groups.contains_any(groups))        
+    
 
 class Visualization(ModelTimestampsMixin, BaseModel):
     id = peewee.PrimaryKeyField()
@@ -947,6 +974,7 @@ class Visualization(ModelTimestampsMixin, BaseModel):
 
     def __unicode__(self):
         return u"%s %s" % (self.id, self.type)
+
 
 
 class Widget(ModelTimestampsMixin, BaseModel):

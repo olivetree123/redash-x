@@ -1,3 +1,4 @@
+
 <div class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -8,6 +9,16 @@
             <div class="modal-body">
                 <p>
                     <input type="text" class="form-control" placeholder="Dashboard Name" ng-model="dashboard.name">
+                </p>
+                <p>
+                     <div id="olive">
+                         <span ng-repeat="group in groups"><span class="label label-primary" >{{group['name']}}</span><i class="fa fa-times meila-sun-hidden" ng-click="deleteGroup(group['id'])"></i>&nbsp&nbsp</span>
+                     </div>
+                </p>
+                <p ng-if="dashboard.id != null">
+                    <select ng-model="default_group" ng-options="group['id'] as group['name'] for group in all_groups"></select>
+                    &nbsp
+                    <i class="fa fa-plus" ng-click="addGroup(default_group)"></i>
                 </p>
 
                 <div class="gridster">

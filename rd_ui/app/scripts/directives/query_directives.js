@@ -10,7 +10,7 @@
       },
       template: '<a ng-href="{{link}}" class="query-link">{{query.name}}</a>',
       link: function(scope, element) {
-        scope.link = 'queries/' + scope.query.id;
+        scope.link = 'queries/' + scope.query.query_hash;
         if (scope.visualization) {
           if (scope.visualization.type === 'TABLE') {
             // link to hard-coded table tab instead of the (hidden) visualization tab
@@ -27,12 +27,12 @@
   function querySourceLink() {
     return {
       restrict: 'E',
-      template: '<span ng-show="query.id && canViewSource">\
+      template: '<span ng-show="query.id && canViewSource && currentUser.isAdmin">\
                     <a ng-show="!sourceMode"\
-                      ng-href="queries/{{query.id}}/source#{{selectedTab}}">Show Source\
+                      ng-href="queries/{{query.query_hash}}/source#{{selectedTab}}">Show Source\
                     </a>\
                     <a ng-show="sourceMode"\
-                      ng-href="queries/{{query.id}}#{{selectedTab}}">Hide Source\
+                      ng-href="queries/{{query.query_hash}}#{{selectedTab}}">Hide Source\
                     </a>\
                 </span>'
     }
@@ -105,7 +105,7 @@
               return hints;
             };
 
-//            CodeMirror.showHint(cm, CodeMirror.hint.anyword);
+          //CodeMirror.showHint(cm, CodeMirror.hint.anyword);
             CodeMirror.showHint(cm, hinter);
           };
 

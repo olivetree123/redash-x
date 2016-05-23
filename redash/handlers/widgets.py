@@ -12,6 +12,7 @@ class WidgetListAPI(BaseResource):
     @require_permission('edit_dashboard')
     def post(self):
         widget_properties = request.get_json(force=True)
+        print 'widget_properties : ',widget_properties
         dashboard = models.Dashboard.get_by_id_and_org(widget_properties.pop('dashboard_id'), self.current_org)
         require_admin_or_owner(dashboard.user_id)
 

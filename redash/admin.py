@@ -17,7 +17,7 @@ class ArrayListField(fields.Field):
 
     def _value(self):
         if self.data:
-            return u', '.join(self.data)
+            return u', '.join(str(self.data))
         else:
             return u''
 
