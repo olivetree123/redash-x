@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#该脚本需要以 root 用户权限运行
+
 # Verify running as root:
 if [ "$(id -u)" != "0" ]; then
     if [ $# -ne 0 ]; then
