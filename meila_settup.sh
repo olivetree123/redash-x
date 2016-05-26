@@ -27,7 +27,7 @@ sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='redas
 if [ $pg_user_exists -ne 0 ]; then
     echo "创建数据库新用户 redash ..."
     sudo -u postgres createuser redash --no-superuser --no-createdb --no-createrole
-    echo "请输入数据库新用户 redash 的密码："
+    echo "先授权,然后设置数据库新用户 redash 的密码："
     sudo -u postgres psql postgres -tAc "\password redash"
     echo "创建数据库..."
     sudo -u postgres createdb redash --owner=redash

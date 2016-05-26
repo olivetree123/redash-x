@@ -62,7 +62,7 @@ STATSD_PORT = int(os.environ.get('REDASH_STATSD_PORT', "8125"))
 STATSD_PREFIX = os.environ.get('REDASH_STATSD_PREFIX', "redash")
 
 # Connection settings for re:dash's own database (where we store the queries, results, etc)
-DATABASE_CONFIG = parse_db_url(os.environ.get("REDASH_DATABASE_URL", "postgresql://redash:zhy@localhost/redash"))
+DATABASE_CONFIG = parse_db_url(os.environ.get("REDASH_DATABASE_URL", "postgresql://redash:meila2016@localhost/redash"))
 
 # Celery related settings
 CELERY_BROKER = os.environ.get("REDASH_CELERY_BROKER", REDIS_URL)
