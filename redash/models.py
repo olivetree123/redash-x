@@ -602,7 +602,6 @@ class Query(ModelTimestampsMixin, BaseModel, BelongsToOrgMixin):
             .switch(Query).join(User)\
             .join(DataSourceGroup, on=(Query.data_source==DataSourceGroup.data_source))\
             .where(Query.is_archived==False)\
-            .where(DataSourceGroup.group << groups)\
             .group_by(Query.id, User.id, QueryResult.id, QueryResult.retrieved_at, QueryResult.runtime)\
             .order_by(cls.created_at.desc())
 
