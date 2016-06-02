@@ -1,4 +1,4 @@
-<div class="container">
+<div ng-show="currentUser.hasPermission('super_admin')" class="container">
     <rd-tabs tabs-collection='tabs' selected-tab='selectedTab'></rd-tabs>
     <smart-table rows="queries" columns="gridColumns"
                  config="gridConfig"
